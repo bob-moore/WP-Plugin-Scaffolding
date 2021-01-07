@@ -43,6 +43,7 @@ config.codekit
 # dev dependencies #
 ####################
 node_modules
+vendor
 composer.lock
 package-lock.json
 .env
