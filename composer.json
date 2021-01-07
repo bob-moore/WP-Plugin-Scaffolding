@@ -8,5 +8,9 @@
 			"wpcl\\pluginscaffolding\\posttypes\\" : "posttypes",
 			"wpcl\\pluginscaffolding\\taxonomies\\" : "taxonomies"
 		}
+	},
+	"scripts": {
+		"post-install-cmd": "npm install",
+		"post-update-cmd": "npm install"
 	}
 }

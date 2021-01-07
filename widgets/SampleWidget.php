@@ -53,44 +53,39 @@ class SampleWidget extends Widget {
 	 */
 	public function getFields() {
 		return [
-			[
-				'id'   => 'title',
+			'title' => [
 				'type' => 'text',
-				'label' => __( 'Title', 'mdm-cornerstone' ),
+				'label' => __( 'Title', 'plugin_scaffolding' ),
 				'default' => '',
 			],
-			[
-				'id'   => 'my_textarea',
+			'my_textarea' => [
 				'type' => 'textarea',
-				'label' => __( 'Select Textarea', 'mdm-cornerstone' ),
+				'label' => __( 'Textarea', 'plugin_scaffolding' ),
 				'default' => '',
 			],
-			[
-				'id'   => 'my_select',
+			'my_select' => [
 				'type' => 'select',
-				'label' => 'Sample Select',
+				'label' => 'Select',
 				'default' => '',
 				'options' => [
-					'' => __( 'Select Option', 'mdm-cornerstone' ),
-					'1' => __( 'Option 1', 'mdm-cornerstone' ),
-					'2' => __( 'Option 2', 'mdm-cornerstone' ),
+					'' => __( 'Select Option', 'plugin_scaffolding' ),
+					'1' => __( 'Option 1', 'plugin_scaffolding' ),
+					'2' => __( 'Option 2', 'plugin_scaffolding' ),
 				],
 			],
-			[
-				'id' => 'my_checkbox',
+			'my_checkbox' => [
 				'type' => 'checkbox',
-				'label' => 'Sample Checkbox',
+				'label' => 'Checkbox',
 				'default' => false,
-				'description' => __( 'This is a sample description', 'mdm-cornerstone' ),
+				'description' => __( 'This is a sample description', 'plugin_scaffolding' ),
 			],
-			[
-				'id' => 'my_radio',
+			'my_radio' => [
 				'type' => 'radio',
-				'label' => 'Sample Radio',
+				'label' => 'Radio',
 				'default' => '1',
 				'options' => [
-					'1' => __( 'Option 1', 'mdm-cornerstone' ),
-					'2' => __( 'Option 2', 'mdm-cornerstone' ),
+					'1' => __( 'Option 1', 'plugin_scaffolding' ),
+					'2' => __( 'Option 2', 'plugin_scaffolding' ),
 				],
 			],
 		];

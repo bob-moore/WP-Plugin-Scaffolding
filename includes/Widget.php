@@ -56,22 +56,24 @@ class Widget extends \WP_Widget {
 
 		printf( '<div class="%s_widget_form" style="padding-top: 10px; padding-bottom: 10px;">', $this->id_base );
 
-		foreach( $this->getFields() as $field => $args ) {
+		foreach ( $this->getFields() as $field => $args ) {
 			/**
-			 * Set value, or default
+			 * Correct field structure
 			 */
-			if( !isset( $instance[ $args['id'] ] ) ) {
-				$instance[ $args['id'] ] = $args['default'];
-			}
-
+			$args = wp_parse_args( $args, [ 'id' => $field, 'type' => '', 'label' => '', 'description' => '', 'value' => '' ] );
+			/**
+			 * Set the value from instance
+			 */
+			$args['value'] = isset( $instance[$field] ) ? $instance[$field] : $args['value'];
+			/**
+			 * Output the form field
+			 */
 			echo '<div class="field" style="margin-bottom: 14px;">';
 
-				$this->input( $args, $instance[ $args['id'] ] );
+				$this->input( $args );
 
-				if( isset( $args['description'] ) && !empty( $args['description'] ) ) {
-
+				if ( !empty( $args['description'] ) ) {
 					printf( '<p class="description">%s</p>', esc_attr( $args['description'] ) );
-
 				}
 
 			echo '</div>';
@@ -90,24 +92,22 @@ class Widget extends \WP_Widget {
 		 * Loop through each field and sanitize
 		 */
 		foreach( $this->getFields() as $field => $args ) {
-
-			$instance[$args['id']] = $new_instance[$args['id']];
 			/**
-			 * Handline for group fields
+			 * Hande for group fields
 			 */
-			if( is_array( $new_instance[ $args['id'] ] ) ) {
+			if( is_array( $new_instance[ $field ] ) ) {
 
-				foreach( $new_instance[ $args['id'] ] as $index => $value ) {
+				foreach( $new_instance[ $field ] as $index => $value ) {
 
 					if( isset( $args['sanitize'] ) && function_exists( $args['sanitize'] ) ) {
 
-						$instance[ $args['id'] ][$index] = call_user_func( $args['sanitize'], $value );
+						$instance[ $field ][$index] = call_user_func( $args['sanitize'], $value );
 
 					}
 
 					else {
 
-						$instance[ $args['id'] ][$index] = sanitize_text_field( $value  );
+						$instance[ $field ][$index] = sanitize_text_field( $value  );
 
 					}
 
@@ -120,13 +120,13 @@ class Widget extends \WP_Widget {
 			else {
 				if( isset( $args['sanitize'] ) && function_exists( $args['sanitize'] ) ) {
 
-					$instance[$args['id']] = call_user_func( $args['sanitize'], $new_instance[$args['id']] );
+					$instance[$field] = call_user_func( $args['sanitize'], $new_instance[$field] );
 
 				}
 
 				else {
 
-					$instance[$args['id']] = sanitize_text_field( $new_instance[$args['id']] );
+					$instance[$field] = sanitize_text_field( $new_instance[$field] );
 
 				}
 			}
@@ -167,7 +167,11 @@ class Widget extends \WP_Widget {
 		// Display after widgets args
 		echo $args['after_widget'];
 	}
-
+	/**
+	 * Get widget form fields
+	 * @return array of form fields
+	 * @since  1.0.0
+	 */
 	public function getFields() {
 		return [];
 	}
@@ -178,25 +182,22 @@ class Widget extends \WP_Widget {
 	 * @param  [array] $input : the input arguments from our field setting
 	 * @param  [string] $value : the value of the input
 	 */
-	private function input( $input, $value ) {
+	private function input( $input ) {
 		switch ( $input['type'] ) {
 			case 'text' :
-				$this->textInput( $input, $value );
+				$this->textInput( $input );
 				break;
 			case 'textarea' :
-				$this->textareaInput( $input, $value );
+				$this->textareaInput( $input );
 				break;
 			case 'radio' :
-				$this->radioInput( $input, $value );
+				$this->radioInput( $input );
 				break;
 			case 'checkbox' :
-				$this->checkboxInput( $input, $value );
+				$this->checkboxInput( $input );
 				break;
 			case 'select' :
-				$this->selectInput( $input, $value );
-				break;
-			case 'checkbox-group' :
-				$this->checkboxInputGroup( $input, $value );
+				$this->selectInput( $input );
 				break;
 			default:
 				// Nothing to do here...
@@ -209,7 +210,7 @@ class Widget extends \WP_Widget {
 	 * @param  [array] $input : the input arguments from our field setting
 	 * @param  [string] $value : the value of the input
 	 */
-	private function textInput( $input, $value ) {
+	private function textInput( $input ) {
 		/**
 		 * Normalize the arguments required for this field type
 		 */
@@ -232,7 +233,7 @@ class Widget extends \WP_Widget {
 			$this->get_field_name( $input['id'] ),
 			$this->get_field_id( $input['id'] ),
 			$input['class'],
-			esc_attr( $value )
+			esc_attr( $input['value'] )
 		);
 	}
 	/**
@@ -241,7 +242,7 @@ class Widget extends \WP_Widget {
 	 * @param  [array] $input : the input arguments from our field setting
 	 * @param  [string] $value : the value of the input
 	 */
-	private function textareaInput( $input, $value ) {
+	private function textareaInput( $input ) {
 		/**
 		 * Normalize the arguments required for this field type
 		 */
@@ -268,7 +269,7 @@ class Widget extends \WP_Widget {
 			$input['class'],
 			$input['rows'],
 			$input['cols'],
-			esc_attr( $value )
+			esc_attr( $input['value'] )
 		);
 	}
 	/**
@@ -277,7 +278,7 @@ class Widget extends \WP_Widget {
 	 * @param  [array] $input : the input arguments from our field setting
 	 * @param  [string] $value : the value of the input
 	 */
-	private function radioInput( $input, $value ) {
+	private function radioInput( $input ) {
 		/**
 		 * Normalize the arguments required for this field type
 		 */
@@ -286,8 +287,8 @@ class Widget extends \WP_Widget {
 			'class'   => 'widefat',
 			'default' => '1',
 			'options' => array(
-				'1' => __( 'Option 1', 'wpcl_plugin_scaffolding' ),
-				'2' => __( 'Option 2', 'wpcl_plugin_scaffolding' ),
+				'1' => __( 'Option 1', 'plugin_scaffolding' ),
+				'2' => __( 'Option 2', 'plugin_scaffolding' ),
 			),
 		);
 		$input = array_merge( $defaults, $input );
@@ -310,7 +311,7 @@ class Widget extends \WP_Widget {
 				$this->get_field_id( $input['id'] ),
 				$input['class'],
 				$input_value,
-				checked( $value, $input_value, false )
+				checked( $input['value'], $input_value, false )
 			);
 			printf( '<label for="%s">%s</label>',
 				$this->get_field_name( $input['id'] ),
@@ -329,7 +330,7 @@ class Widget extends \WP_Widget {
 	 * @param  [array] $input : the input arguments from our field setting
 	 * @param  [string] $value : the value of the input
 	 */
-	private function checkboxInput( $input, $value ) {
+	private function checkboxInput( $input ) {
 		/**
 		 * Normalize the arguments required for this field type
 		 */
@@ -342,12 +343,11 @@ class Widget extends \WP_Widget {
 		/**
 		 * Do Input
 		 */
-		printf( '<input name="%s" id="%s" class="%s" type="checkbox" value="%s" %s/>',
+		printf( '<input name="%s" id="%s" class="%s" type="checkbox" value="1" %s/>',
 			$this->get_field_name( $input['id'] ),
 			$this->get_field_id( $input['id'] ),
 			$input['class'],
-			$input['value'],
-			checked( $input['value'], $value, false )
+			checked( $input['value'], '1', false )
 		);
 		/**
 		 * Do label
@@ -358,47 +358,13 @@ class Widget extends \WP_Widget {
 		);
 	}
 
-	public function checkboxInputGroup( $input, $value ) {
-		/**
-		 * Normalize the arguments required for this field type
-		 */
-		$defaults = array(
-			'label' => '',
-			'class' => '',
-			'default' => '0',
-			'options' => [],
-		);
-		$input = array_merge( $defaults, $input );
-
-		echo '<fieldset>';
-
-		printf( '<legend style="margin-bottom: 5px; display: block;">%s</legend>',
-			$input['label']
-		);
-
-		foreach( $input['options'] as $option_value => $option_name ) {
-			$args = [
-				'id' => "{$input['id']}[$option_value]",
-				'label' => $option_name
-			];
-			$option_value = isset( $value[$option_value] ) ? $value[$option_value] : false;
-
-			echo '<div class="field-group-item">';
-
-			$this->checkboxInput( $args, $option_value );
-
-			echo '</div>';
-		}
-
-		echo '</fieldset>';
-	}
 	/**
 	 * Output select input for widget forms
 	 *
 	 * @param  [array] $input : the input arguments from our field setting
 	 * @param  [string] $value : the value of the input
 	 */
-	private function selectInput( $input, $value ) {
+	private function selectInput( $input ) {
 		/**
 		 * Normalize the arguments required for this field type
 		 */
@@ -406,7 +372,7 @@ class Widget extends \WP_Widget {
 			'label' => '',
 			'class' => 'widefat',
 			'options' => array(
-				'' => __( 'Select Option', 'wpcl_plugin_scaffolding' ),
+				'' => __( 'Select Option', 'plugin_scaffolding' ),
 			),
 		);
 		$input = array_merge( $defaults, $input );
@@ -431,7 +397,7 @@ class Widget extends \WP_Widget {
 		foreach( $input['options'] as $option_value => $label ) {
 			printf( '<option value="%s"%s>%s</option>',
 				$option_value,
-				selected( $value, $option_value, false ),
+				selected( $input['value'], $option_value, false ),
 				$label
 			);
 		}

@@ -4,14 +4,14 @@
  * This file is read by WordPress to generate the plugin information in the plugin admin area.
  * This file also defines plugin parameters, registers the activation and deactivation functions, and defines a function that starts the plugin.
  * @link    https://www.wpcodelabs.com
- * @since   0.1.0
+ * @since   1.0.0
  * @package plugin_scaffolding
  *
  * @wordpress-plugin
  * Plugin Name: Plugin Scaffolding
  * Plugin URI:  https://github.com/bob-moore/WP-Plugin-Scaffolding
  * Description: Plugin scaffolding for rapid plugin development
- * Version:     0.3.0
+ * Version:     1.0.0
  * Author:      WP Code Labs
  * Author URI:  https://www.wpcodelabs.com
  * License:     GPL-2.0+
@@ -38,7 +38,7 @@ if( !class_exists( 'PluginScaffolding' ) ) {
 			/**
 			 * Register the text domain
 			 */
-			load_plugin_textdomain( 'mdm_embedded_content', false, basename( dirname( __FILE__ ) ) . '/languages' );
+			load_plugin_textdomain( 'plugin_scaffolding', false, basename( dirname( __FILE__ ) ) . '/languages' );
 			/**
 			 * Register activation hook
 			 */
