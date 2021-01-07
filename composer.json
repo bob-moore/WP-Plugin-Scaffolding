@@ -1,0 +1,12 @@
+{
+	"minimum-stability": "dev",
+	"prefer-stable": true,
+	"autoload": {
+		"psr-4": {
+			"wpcl\\pluginscaffolding\\" : "includes",
+			"wpcl\\pluginscaffolding\\widgets\\" : "widgets",
+			"wpcl\\pluginscaffolding\\posttypes\\" : "posttypes",
+			"wpcl\\pluginscaffolding\\taxonomies\\" : "taxonomies"
+		}
+	}
+}
